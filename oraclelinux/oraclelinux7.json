@@ -1,0 +1,59 @@
+{
+  "builders": [
+    {
+      "boot_command": [
+        "<tab> text ks=http://{{ .HTTPIP }}:{{ .HTTPPort }}/oraclelinux7.cfg<enter><wait>"
+      ],
+      "boot_wait": "10s",
+      "disk_size": "20000",
+      "guest_os_type": "Oracle_64",
+      "hard_drive_interface": "sata",
+      "headless": "true",
+      "http_directory": "http",
+      "iso_checksum": "{{user `iso_checksum`}}",
+      "iso_checksum_type": "{{user `iso_checksum_type`}}",
+      "iso_url": "{{user `iso_url`}}",
+      "shutdown_command": "echo vagrant | sudo -S shutdown -P now",
+      "ssh_password": "vagrant",
+      "ssh_username": "vagrant",
+      "ssh_wait_timeout": "45m",
+      "type": "virtualbox-iso",
+      "vboxmanage": [
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--vram",
+          "32"
+        ]
+      ],
+      "vm_name": "oraclelinux7"
+    }
+  ],
+  "post-processors": [
+    [
+      {
+        "override": {
+          "virtualbox": {
+            "output": "oraclelinux7.box"
+          }
+        },
+        "type": "vagrant"
+      }
+    ]
+  ],
+  "provisioners": [
+    {
+      "execute_command": "echo vagrant | sudo -S sh '{{ .Path }}'",
+      "scripts": [
+        "http/install_guest_additions.sh",
+        "http/install_vagrant_insecure_key.sh"
+      ],
+      "type": "shell"
+    }
+  ],
+  "variables": {
+    "iso_checksum": "",
+    "iso_checksum_type": "",
+    "iso_url": ""
+  }
+}
